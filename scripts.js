@@ -1,4 +1,4 @@
-var streamerArr = ["Bacon_Donut", "Wyld", "PhantomL0rd", "Destiny", "Charliewinsmore", "okolnir", "LegendaryLea", "trumpsc", "nl_kripp", "pajlada", "wingsofdeath", "froggen", "mushisgosu", "TimTheTatman", "freecodecamp", "food", "bobross", "SiegeGames", "cryaotic", "bayleejae"];
+var streamerArr = ["Bacon_Donut", "Wyld", "PhantomL0rd", "Destiny", "Charliewinsmore", "okolnir", "LegendaryLea", "trumpsc", "nl_kripp", "pajlada", "wingsofdeath", "froggen", "mushisgosu", "TimTheTatman", "freecodecamp", "food", "bobross", "SiegeGames", "ExampleFakeAccount", "bayleejae"];
 var showWrapper = false;
 var filter = {
     ALL: 0,
@@ -8,14 +8,17 @@ var filter = {
 var filterMode = filter.ALL;
 var timeoutID, prev, counter = 0;
 var streamerBoxes = [];
+for (var i = 0; i < streamerArr.length; i++) {
+    streamerBoxes[i] = "not found";
+}
 var onlineStreams = "",
     offlineStreams = "",
     searchStreams = "";
 
 $(function() {
-
     $.each(streamerArr, function(index) {
         $.getJSON("https://api.twitch.tv/kraken/streams/" + streamerArr[index], function(json) {
+            // console.log(JSON.stringify(json));
             if (json.stream) {
                 streamerBoxes[index] = addOnline(json.stream.channel.status, json.stream.preview.medium, json.stream.channel.game, streamerArr[index]);
                 onlineStreams = onlineStreams + streamerBoxes[index];
@@ -169,6 +172,12 @@ function addOffline(image, sName) {
 }
 
 function updateStreams() {
+    for (var i = 0; i < streamerArr.length; i++) {
+        if (streamerBoxes[i] === "not found") {
+            streamerBoxes[i] = addOffline("DNE.png", streamerArr[i]);
+            offlineStreams += streamerBoxes[i];
+        }
+    }
     if (filterMode === filter.ALL)
         $(".container-fluid .flex-wrap").html(onlineStreams).append(offlineStreams);
     else if (filterMode === filter.ONLINE)
